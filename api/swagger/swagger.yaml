@@ -562,7 +562,7 @@ definitions:
       user: 
         type: object
         properties:
-            _links: 
+             _links: 
                 type: object
                 properties:
                     self:
@@ -570,10 +570,26 @@ definitions:
                       properties:
                         href:
                           type: string
-            _id:
-              type: string
-            username:
-              type: string
+             _embedded:
+              type: object
+              properties:
+                 usersList:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                          _links: 
+                              type: object
+                              properties:
+                                  self:
+                                    type: object
+                                    properties:
+                                      href:
+                                        type: string
+                          _id:
+                            type: string
+                          username:
+                            type: string
 
 
                                         
@@ -714,5 +730,12 @@ definitions:
   GetChart:
      type: object
      properties:
-             chart: 
-               type: string
+      _links:
+        type: object
+        properties:
+            self: 
+              type: string
+      _id:
+        type: string
+      chart: 
+        type: string

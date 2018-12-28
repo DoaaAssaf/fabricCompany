@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const dbConfig = require('./config/database.js');
 const mongoose = require('mongoose');
 
-
 module.exports = app; // for testing
 
 
@@ -45,6 +44,7 @@ app.get('/', (req, res) => {
 require('./api/routes/note.js')(app);
 require('./api/routes/user.js')(app);
 require('./api/routes/admin.js')(app);
+require('./api/routes/order.js')(app);
 var config = {
   appRoot: __dirname // required config
 };
@@ -59,4 +59,5 @@ SwaggerExpress.create(config, function(err, swaggerExpress) {
     app.listen(3000, () => {
         console.log("Server is listening on port 3000");
     });
+
 });

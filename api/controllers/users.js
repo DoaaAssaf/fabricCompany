@@ -3,6 +3,9 @@ const baseUrl = require("./../../config/urlConf");
 var util = require('util');
 const User = require('../models/users.js');
 const shortid = require('shortid');
+const multer = require('multer');
+const upload = multer({dis:'paints/'});
+
 exports.findAll = findAll;
 
 
@@ -58,14 +61,51 @@ exports.create = (req, res) => {
 };
 // Retrieve and return all Users from the database.
 function  findAll (req, res) {
+
+        if (req.query.top10 === 'true'){
+            console.log(req.query);
+            var mysort = {'_embedded.totalSales': -1 };
+            User.find().sort(mysort).limit(10)
+                .then(user => {
+                    res.json({
+                        _links: {
+                            self:{
+                                href: baseUrl.baseURL+"user/"
+                            }
+                        },
+                        _embedded:{
+                            usersList: user
+                        }
+                    });
+                }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while retrieving Users."
+                });
+            });
+
+        }
+
+    else {
+        console.log('should have query string');
+
     User.find({}, {'username': true,"_links":true})
         .then(user => {
-            res.send(user);
+            res.json({
+                _links: {
+                    self:{
+                        href: baseUrl.baseURL+"user/"
+                    }
+                },
+                _embedded:{
+                    usersList:[ user]
+                }
+            });
         }).catch(err => {
         res.status(500).send({
             message: err.message || "Some error occurred while retrieving Users."
         });
     });
+}
 };
 // Find a single User with a UserId
 exports.findOne = (req, res) => {

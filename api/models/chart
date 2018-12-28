@@ -1,0 +1,17 @@
+
+const mongoose = require('mongoose');
+
+const ChartsSchema = mongoose.Schema({
+    _id: String,
+    chart:  {
+        data: Buffer,
+        contentType: String
+    },
+    _links: {
+        self:{
+            href: String
+        }
+    }
+});
+
+module.exports = mongoose.model('Chart', ChartsSchema);
