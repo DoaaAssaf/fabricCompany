@@ -1,0 +1,718 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Hello World App
+# during dev, should point to your local machine
+host: localhost:3000
+# basePath prefixes all resource paths 
+basePath: /
+# 
+securityDefinitions:
+  AdminAuth:
+    type: basic
+  UserAuth:
+    type: basic  
+  SupplierAuth:
+    type: basic
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+  /user:
+    x-swagger-router-controller: user
+    get:
+      description: get the users' list
+      parameters:
+        - in: query
+          name: top10
+          required: false
+          type: boolean
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetUsersListResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  
+    post:
+      description: add a new user to the list
+      parameters:
+        - name: user
+          description:  user information
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/user"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetuserResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security: []
+  /user/{id}:
+    x-swagger-router-controller: user
+    get:
+      description: get infromation about one user
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetuserResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    put:
+      description: update an existing user
+      # define the parameters
+      parameters:
+        - name: id
+          description: user id
+          type: string
+          in: path
+          required: true
+        - name: user
+          description: user
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/user"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetuserResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+            
+    delete:
+      description: delete a user
+      # define the parameters
+      parameters:
+        - name: id
+          description: user id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+  /admin:
+    x-swagger-router-controller: admin
+    get:
+      description: get the admins' list
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetAdminsListResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+    post:
+      description: add a new admin to the list
+      parameters:
+        - name: admin
+          description:  admin information
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/admin"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetAdminResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /admin/{id}:
+    x-swagger-router-controller: admin
+    get:
+      description: get infromation about one admin
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetAdminResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+    put:
+      description: update an existing admin
+      # define the parameters
+      parameters:
+        - name: id
+          description: admin id
+          type: string
+          in: path
+          required: true
+        - name: admin
+          description: admin
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/admin"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetAdminResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+    delete:
+      description: delete a admin
+      # define the parameters
+      parameters:
+        - name: id
+          description: admin id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /admin/chart/total-wight:
+    x-swagger-router-controller: admin
+    get:
+      description: get chart of total kgs of the yarn in each production process
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetChart"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /admin/chart/total-sales:
+     x-swagger-router-controller: admin
+     get:
+      description: Pie chart of total sales per yarn type sold
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetChart"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /admin/chart/closed-orders:
+    x-swagger-router-controller: admin
+    get:
+      description:  Line chart of the closed orders per month since 1st january until current month
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetChart"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /notes:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hello_world
+    get:
+   
+      operationId: findAll
+
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/notesRes"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    post:
+      operationId: create
+      parameters:
+        - name: note
+          in: body
+          required: true
+          schema:
+              $ref: "#/definitions/note"
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/noteResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  UnauthorizedResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  badRequestResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  internalServerErrorRequestResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  notFoundResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  GeneralCreatedSuccessfullyResponse:
+    type: object
+    properties:
+      success:
+        type: number
+        description: returns 1 if successful
+      description:
+        type: string
+        description: a short comment 
+    required:
+      - success
+      - description
+  GeneralUpdateddSuccessfullyResponse:
+    type: object
+    properties:
+      success:
+        type: number
+        description: returns 1 if successful
+      description:
+        type: string
+        description: a short comment 
+    required:
+      - success
+      - description
+  GeneralDeletedddSuccessfullyResponse:
+    type: object
+    properties:
+      success:
+        type: number
+        description: returns 1 if successful
+      description:
+        type: string
+  notesRes:
+       type: array
+       items:
+           type: object
+           properties:
+            title:
+             type: string
+            content:
+              type: string
+  note:
+           type: object
+           properties:
+            title:
+             type: string
+            content:
+              type: string
+  noteResponse:
+           type: object
+           properties:
+            _id:
+             type: string
+            title:
+             type: string
+            content:
+              type: string
+            createdAt:
+             type: string
+            updatedAt:
+             type: string
+            __v:
+             type: number
+  GetUsersListResponse:
+    properties:
+      user: 
+        type: object
+        properties:
+            _links: 
+                type: object
+                properties:
+                    self:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+            _id:
+              type: string
+            username:
+              type: string
+
+
+                                        
+  GetuserResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        properties:
+          self:
+            type: object
+            properties:
+              href:
+                type: string
+      _embedded:
+        type: object
+        properties:
+          orders:
+            type: array
+            items:
+                type: object
+                properties:
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+                  _id: 
+                    type: string
+          totalSales:
+            type: number
+      _id:
+        type: string
+        description: user unique id
+      username:
+        type: string
+        description: user name
+      password:
+        type: string
+        description: user password
+      email:
+        type: string
+        description: user email
+      createdAt:
+       type: string
+      updatedAt:
+       type: string
+      __v:
+       type: number
+  user:
+    type: object
+    properties:
+      username:
+        type: string
+        description: user name
+      password:
+        type: string
+        description: user password
+      email:
+        type: string
+        description: user email
+    required:
+      - username
+      - password
+      - email  
+  GetAdminsListResponse:
+    properties:
+      admin: 
+        type: object
+        properties:
+             _links: 
+                type: object
+                properties:
+                    self:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+             _embedded:
+              type: object
+              properties:
+                 adminsList:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        _links:
+                          type: object
+                          properties:
+                               self:
+                                type: object
+                                properties:
+                                 href:
+                                  type: string
+                        id:
+                          type: string
+                        adminName:
+                          type: string
+  GetAdminResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        properties:
+            self: 
+              type: string
+      _id:
+        type: string
+        description: admin unique id
+      adminName:
+        type: string
+        description: admin name
+      password:
+        type: string
+        description: admin password
+      email:
+        type: string
+        description: admin email
+  admin:
+    type: object
+    properties:
+      adminName:
+        type: string
+        description: admin name
+      password:
+        type: string
+        description: admin password
+      email:
+        type: string
+        description: admin email
+    required:
+      - adminName
+      - password
+      - email         
+  GetChart:
+     type: object
+     properties:
+             chart: 
+               type: string
