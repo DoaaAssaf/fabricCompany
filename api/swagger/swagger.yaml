@@ -423,43 +423,274 @@ paths:
             $ref: "#/definitions/ErrorResponse"
       security:
          - AdminAuth: []
-  /notes:
-    # binds a127 app logic to a route
-    x-swagger-router-controller: hello_world
+ 
+  /order:
+    x-swagger-router-controller: order
     get:
-   
-      operationId: findAll
-
+      description: get the order list for the logged in user or return the whole orders list if the requester is an admin
+      parameters:
+        - in: query
+          name: status
+          type: integer
+          description: /order?status=pending
+      # define the type of response for Success "200" and Error
       responses:
         "200":
           description: Success
           schema:
-            # a pointer to a definition
-            $ref: "#/definitions/notesRes"
-        # responses may fall through to errors
+            $ref: "#/definitions/GetOrdersListResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
         default:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
     post:
-      operationId: create
+      description: add a new order to the cart
+      # movie info to be stored
       parameters:
-        - name: note
+        - name: order
+          description:  new order
           in: body
           required: true
           schema:
-              $ref: "#/definitions/note"
+            $ref: "#/definitions/order"
       responses:
-        "200":
-          description: Success
+        "201":
+          description: created
           schema:
-            # a pointer to a definition
-            $ref: "#/definitions/noteResponse"
-        # responses may fall through to errors
+            $ref: "#/definitions/GetOrderResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
         default:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+  /order/{id}:
+    get:
+      description: get infromation about one order for one user
+      parameters:
+        - in: query
+          name: status
+          type: integer
+          description: /order?status=open
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOrderResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+
+  /order/{id}/confirmation:
+    get:
+      description: get confirmation status for the order to check whether is was confirmed or not
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/Confirmation"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    patch:
+      description: confirm given order
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+        - name: confirmation
+          description:  post a confirmation for the order
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/Confirmation"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetOrderResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+  /order/{id}/stampingImg:
+    get:
+      description: get stamping image if the user select that he wants to add stampling stage to the fabric process table
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/stampingImgResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    post:
+      description: post the image
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+        - name: stamping image
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/stampingImg"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralCreatedSuccessfullyResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+  /order/{id}/invoice/{invoiceID}:
+    get:
+      description: get the invoice for an order after it is closed 
+      # define the type of response for Success "200" and Error
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+        - name: invoiceID
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/invoice"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not Found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -526,37 +757,8 @@ definitions:
         description: returns 1 if successful
       description:
         type: string
-  notesRes:
-       type: array
-       items:
-           type: object
-           properties:
-            title:
-             type: string
-            content:
-              type: string
-  note:
-           type: object
-           properties:
-            title:
-             type: string
-            content:
-              type: string
-  noteResponse:
-           type: object
-           properties:
-            _id:
-             type: string
-            title:
-             type: string
-            content:
-              type: string
-            createdAt:
-             type: string
-            updatedAt:
-             type: string
-            __v:
-             type: number
+
+
   GetUsersListResponse:
     properties:
       user: 
@@ -739,3 +941,283 @@ definitions:
         type: string
       chart: 
         type: string
+  order:
+          required:
+           - stamping
+           - dyeing
+           - quantity
+           - deliveryDate
+           - delivaryPlace
+  
+          type: object
+          properties:
+            stamping:
+              type: string
+            stampingImg:
+              type: string
+            dyeing:
+              type: string
+            dyeingColor:
+              type: string
+            quantity:
+              type: number
+            deliveryDate:
+              type: string
+            delivaryPlace:
+              type: object
+              properties:
+                street:
+                  type: string
+                city:
+                  type: string
+                state:
+                  type: string
+                country:
+                  type: string
+                zipCode: 
+                  type: number
+ 
+            fabricSpec:
+              type: array
+              items: 
+                type: object
+                properties:
+                    code:
+                      type: string
+                    NE: 
+                      type: number
+                    cables: 
+                      type: number
+                    filament: 
+                      type: number
+                    TPM: 
+                      type: number
+                    percintage: 
+                      type: number
+  GetOrderResponse:
+    properties:
+      _links:
+         type: object
+         properties:
+              self:
+                type: object
+                properties:
+                    href: 
+                      type: string
+              owner:
+                type: object
+                properties:
+                    href: 
+                      type: string
+                    userName:
+                      type: string
+      _embedded:
+         type: object
+         properties:
+           invoice:
+             type: object
+             properties:
+               self:
+                 type: object
+                 properties:
+                   href: 
+                     type: string
+           costDetails:
+             type: object
+             properties:
+               self:
+                 type: object
+                 properties:
+                   href:
+                     type: string
+           confirmation:
+             type: object
+             properties:
+               self:
+                 type: object
+                 properties:
+                   href:
+                     type: string
+           stampingImg:
+             type: object
+             properties:
+               self:
+                 type: object
+                 properties:
+                   href:
+                     type: string
+
+      id:
+        type: string
+      orderDate:
+        type: string
+      stamping:
+        type: boolean
+      dyeing:
+        type: boolean
+      dyeingColor:
+        type: string
+      quantity:
+        type: number
+      deliveryDate:
+        type: string
+      delivaryPlace:
+        type: object
+        properties:
+          street:
+            type: string
+          city:
+            type: string
+          state:
+            type: string
+          country:
+            type: string
+          zipCode: 
+            type: number
+      status:
+        type: string
+      fabricSpec:
+        type: array
+        items: 
+          type: object
+          properties:
+              code:
+                type: string
+              NE: 
+                type: number
+              cables: 
+                type: number
+              filament: 
+                type: number
+              TPM: 
+                type: number
+              percintage: 
+                type: number
+      confirmed:
+        type: boolean
+      totalCost:
+        type: number
+      currency: 
+        type: string
+  Confirmation:
+    properties:
+      confirmed:
+        type: boolean
+  GetOrdersListResponse:
+    properties:
+      _links:
+           type: object
+           properties:
+              self:
+                type: object
+                properties:
+                    href: 
+                      type: string
+
+      _embedded:
+        type: object
+        properties:
+          orders:
+            type: array
+            items: 
+              type: object
+              properties:
+                _links:
+                  type: object
+                  properties:
+                    self:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+                    owner:
+                      type: object
+                      properties:
+                          href: 
+                            type: string
+                          userName:
+                            type: string
+                id:
+                  type: string
+                date:
+                  type: string
+                status:
+                  type: string
+          totalSales:
+            type: number
+  stampingImgResponse:
+       type: object
+       properties:
+          _links:
+             type: object
+             properties:
+                  self:
+                    type: object
+                    properties:
+                        href: 
+                          type: string
+                  order:
+                    type: object
+                    properties:
+                        href: 
+                          type: string
+          image:
+            type: string
+  invoice:
+      required:
+        - invoiceId
+        - customerNumber
+        - date
+        - totalVlue
+        - stagesValues
+      type: object
+      properties:
+            _links:
+             type: object
+             properties:
+                  self:
+                    type: object
+                    properties:
+                        href: 
+                          type: string
+                  owner:
+                    type: object
+                    properties:
+                        href: 
+                          type: string
+                        userName:
+                          type: string
+                  order:
+                    type: object
+                    properties:
+                        href: 
+                          type: string
+                        orderID:
+                          type: string
+            invoiceId:
+              type: number
+            customerNumber:
+              type: string
+            orderID:
+              type: string
+            date:
+              type: string
+            totalVlue:
+              type: number
+            stagesValues:
+              type: array
+              items:
+                type: object
+                properties:
+                  stage:
+                    type: string
+                  cost:
+                    type: number
+  stampingImg:
+     type: object
+     properties:
+      img:
+        type: string
+     required:
+      - img
+ 

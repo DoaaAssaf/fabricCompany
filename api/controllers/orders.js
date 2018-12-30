@@ -1,151 +1,178 @@
 'use strict';
 const baseUrl = require("./../../config/urlConf");
 var util = require('util');
-const Admin = require('../models/admins.js');
+const Order = require('../models/order.js');
+const User = require('../models/users.js');
 const Chart = require('../models/chart');
-//const AdminsList = require('../models/adminsList.js');
 const shortid = require('shortid');
 exports.findAll = findAll;
 const multer = require('multer');
 const upload = multer({dis:'paints/'});
 const fs = require('fs');
 
-// Create and Save a new Admin
 exports.create = (req, res) => {
-    // Validate request
-    console.log("Create was called");
-    if(!req.body.adminName|| !req.body.password) {
-        return res.status(400).send({
-            message: "bad request admin name and email and password can not be empty"
-        });
+
+    var id = shortid.generate();
+    var  imgUrl = null;
+    if (req.body.stampingImg === true){
+        imgUrl= baseUrl.baseURL+"order/"+id+"/stampingImg";
     }
-
-    // Create a Admin
-    var id=shortid.generate();
-    const admin = new Admin({
-        adminName: req.body.adminName,
-        email: req.body.email,
-        password: req.body.password,
-        _id : id,
+    const order = new Order({
+        _id: id,
+        stampingImg: req.body.stampingImg,
+        dyeingColor: req.body.dyeingColor,
+        quantity: req.body.quantity,
+        deliveryDate: req.body.deliveryDate,
+        deliveryPlace: req.body.deliveryPlace,
+        fabricSpec: req.body.fabricSpec,
         _links: {
-            self:{
-                href: baseUrl.baseURL+ "admin/"+id
+            self: {
+                href: baseUrl.baseURL + "order/" + id
+            },
+            owner: {
+                href: baseUrl.baseURL + "user/" + req.username,
+                // $ref: "user",
+                // $id: userId,
+                // $db: "fabricCompanyDB",
             }
-        }
+        },
+        _embedded: {
+                invoice: {
+                    self: {
+                        href: null
+                    }
+                },
+                costDetails: {
+                    self:
+                        {
+                            href: baseUrl.baseURL+"order/"+id+ "/cost-details/"
+                        }
+                },
+                confirmation: {
+                    self: {
+                        href: baseUrl.baseURL+"order/"+id+ "/confirmation/"
+                    }
+                },
+                stampingImg: {
+                    self: {
+                        href:  imgUrl
+                    }
+                }
+            }
+        ,
+        confirmed: false,
+        totalCost: 12,
+        currency: "$",
+        status: "pending"
+
     });
-
-    // Save Admin in the database
-    admin.save()
+    order.save()
         .then(data => {
-            //  res.header("Access-Control-Allow-Origin", "*");
-            //  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
             res.status(201).send(data);
-
         }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while creating the Admin."
+            message: err.message || "Some error occurred while creating the Order."
         });
-    });
+});
 };
-// Retrieve and return all Admins from the database.
+// Retrieve and return all Orders from the database.
 function  findAll (req, res) {
-    Admin.find({}, {'adminName': true,"_links":true})
-        .then(admin => {
+    Order.find({}, {'orderName': true,"_links":true})
+        .then(order => {
             res.json({
                 _links: {
                     self:{
-                        href: baseUrl.baseURL+"admin/"
+                        href: baseUrl.baseURL+"order/"
                     }
                 },
                 _embedded:{
-                    adminsList:[ admin]
+                    ordersList:[ order]
                 }
             });
         }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while retrieving Admins."
+            message: err.message || "Some error occurred while retrieving Orders."
         });
     });
 };
-// Find a single Admin with a AdminId
+// Find a single Order with a OrderId
 exports.findOne = (req, res) => {
-    Admin.findById(req.params.adminId)
-        .then(admin => {
-            if(!admin) {
+    Order.findById(req.params.orderId)
+        .then(order => {
+            if(!order) {
                 return res.status(404).send({
-                    message: "Admin not found with id " + req.params.adminId
+                    message: "Order not found with id " + req.params.orderId
                 });
             }
-            res.send(admin);
+            res.send(order);
         }).catch(err => {
         if(err.kind === 'ObjectId') {
             return res.status(404).send({
-                message: "Admin not found with id " + req.params.adminId
+                message: "Order not found with id " + req.params.orderId
             });
         }
         return res.status(500).send({
-            message: "Error retrieving Admin with id " + req.params.adminId
+            message: "Error retrieving Order with id " + req.params.orderId
         });
     });
 };
-// Update a admin identified by the AdminId in the request
+// Update a order identified by the OrderId in the request
 exports.update = (req, res) => {
     // Validate Request
-    if(!req.body.adminName || !req.body.email || !req.body.password) {
+    if(!req.body.orderName || !req.body.email || !req.body.password) {
         return res.status(400).send({
-            message: "admin name and email and password can not be empty"
+            message: "order name and email and password can not be empty"
         });
     }
 
-    // Find Admin and update it with the request body
-    Admin.findByIdAndUpdate(req.params.adminId, {
-        adminName: req.body.adminName ,
+    // Find Order and update it with the request body
+    Order.findByIdAndUpdate(req.params.orderId, {
+        orderName: req.body.orderName ,
         email: req.body.email,
         password: req.body.password
     }, {new: true})
-        .then(admin => {
-            if(!admin) {
+        .then(order => {
+            if(!order) {
                 return res.status(404).send({
-                    message: "Admin not found with id " + req.params.adminId
+                    message: "Order not found with id " + req.params.orderId
                 });
             }
-            res.send(admin);
+            res.send(order);
         }).catch(err => {
         if(err.kind === 'ObjectId') {
             return res.status(404).send({
-                message: "Admin not found with id " + req.params.adminId
+                message: "Order not found with id " + req.params.orderId
             });
         }
         return res.status(500).send({
-            message: "Error updating Admin with id " + req.params.adminId
+            message: "Error updating Order with id " + req.params.orderId
         });
     });
 };
-// Delete a Admin with the specified AdminId in the request
+// Delete a Order with the specified OrderId in the request
 exports.delete = (req, res) => {
-    Admin.findByIdAndRemove(req.params.adminId)
-        .then(admin => {
-            if(!admin) {
+    Order.findByIdAndRemove(req.params.orderId)
+        .then(order => {
+            if(!order) {
                 return res.status(404).send({
-                    message: "admin not found with id " + req.params.adminId
+                    message: "order not found with id " + req.params.orderId
                 });
             }
-            res.send({message: "admin deleted successfully!"});
+            res.send({message: "order deleted successfully!"});
         }).catch(err => {
         if(err.kind === 'ObjectId' || err.name === 'NotFound') {
             return res.status(404).send({
-                message: "admin not found with id " + req.params.adminId
+                message: "order not found with id " + req.params.orderId
             });
         }
         return res.status(500).send({
-            message: "Could not delete admin with id " + req.params.adminId
+            message: "Could not delete order with id " + req.params.orderId
         });
     });
 };
 
 
-// Find a single Admin with a AdminId
+// Find a single Order with a OrderId
 exports.getChart = (req, res) => {
     Chart.findById(req.params.chartName, {'chart': true})
         .then(chart => {
@@ -176,7 +203,7 @@ exports.postChart = (req, res) => {
     console.log("Create was called");
 console.log(req.file);
 
-    // Create a Admin
+    // Create a Order
     var id=shortid.generate();
 
     const chart = new Chart({
@@ -184,12 +211,12 @@ console.log(req.file);
         chart: fs.readFileSync("A:\\fabricCompany\\fabric2\\api\\paints\\"),
         _links: {
             self:{
-                href: baseUrl.baseURL+ "admin/chart/"+id
+                href: baseUrl.baseURL+ "order/chart/"+id
             }
         }
     });
 
-    // Save Admin in the database
+    // Save Order in the database
     chart.save()
         .then(data => {
             //  res.header("Access-Control-Allow-Origin", "*");
@@ -199,7 +226,7 @@ console.log(req.file);
 
         }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while creating the Admin."
+            message: err.message || "Some error occurred while creating the Order."
         });
     });
 };
