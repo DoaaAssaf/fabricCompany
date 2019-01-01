@@ -3,7 +3,11 @@ const mongoose = require('mongoose');
 
 const OrderSchema = mongoose.Schema({
     _id: String,
-    stampingImg: { type: Boolean, required: true, default:false},
+    stamping: { type: Boolean, required: true, default:false},
+    StampingImage: {
+        link:String,
+        uploaded:Boolean
+    },
     dyeingColor: { type: String},
     quantity: { type: Number, required: true},
     deliveryDate: { type: String, required:true},

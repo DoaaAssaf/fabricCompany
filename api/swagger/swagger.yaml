@@ -423,7 +423,6 @@ paths:
             $ref: "#/definitions/ErrorResponse"
       security:
          - AdminAuth: []
- 
   /order:
     x-swagger-router-controller: order
     get:
@@ -524,7 +523,6 @@ paths:
       security:
          - AdminAuth: []
          - UserAuth: []
-
   /order/{id}/confirmation:
     get:
       description: get confirmation status for the order to check whether is was confirmed or not
@@ -691,6 +689,321 @@ paths:
       security:
          - AdminAuth: []
          - UserAuth: []
+  /process-table:
+    x-swagger-router-controller: process-table
+    get:
+      description: get process table
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetTableResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    post:
+      description: add a new stage to the process table
+      parameters:
+        - name: cat
+          description:  cat info
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/stage"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetStageResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /Process-table/{id}:
+    get:
+      description: get information about stage of the process table details
+      # define the type of response for Success "200" and Error
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetStageResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    put:
+      description: update one stage information
+      # movie info to be stored
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+        - name: stage
+          description: stage information
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/stage"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetStageResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+    delete:
+      description: delete a stage from the process table
+      # define the parameters
+      parameters:
+  
+        - name: id
+          description: stage id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /colorCat:
+    x-swagger-router-controller: cat
+    get:
+      description: get available colors categories
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetCatsListResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    post:
+      description: add a new category to the categories list
+      # movie info to be stored
+      parameters:
+        - name: cat
+          description:  cat info
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/cat"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetCatResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /colorCat/{id}:
+    get:
+      description: get the colorCat details
+      # define the type of response for Success "200" and Error
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetCatResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    put:
+      description: update colorCat details
+      # movie info to be stored
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+        - name: colorCat
+          description: colorCat
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/cat"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetCatResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+    delete:
+      description: delete a CATEGORY
+      # define the parameters
+      parameters:
+  
+        - name: id
+          description: category id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  
+    
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -1220,4 +1533,241 @@ definitions:
         type: string
      required:
       - img
+  stage:
+    required:
+        - name
+        - description
+        - order
+        - price
+        - currency
+        - optional
+    type: object
+    properties:
+        name:
+          type: string
+        description:
+          type: string
+        order:
+          type: number
+        price:
+          type: number
+        currency:
+          type: number
+        optional:
+          type: string
+  GetStageResponse:
+     type: object
+     properties:
+      _links:
+         type: object
+         properties:
+           self:
+             type: object
+             properties:
+               href:
+                type: string
+           process-table:
+             type: object
+             properties:
+               href:
+                type: string
+      name:
+        type: string
+      description:
+        type: string
+      id:
+        type: string
+      order:
+        type: number
+      price:
+        type: number
+      currency:
+        type: number
+      optional:
+        type: string
+  GetTableResponse:
+     type: object
+     properties:
+       _links:
+           type: object
+           properties:
+             self:
+               type: object
+               properties:
+                 href:
+                  type: string
+       _embedded:
+          type: object
+          properties:
+            stages:
+              type: array
+              items:
+                 type: object
+                 properties:
+                    _links:
+                       type: object
+                       properties:
+                         self:
+                           type: object
+                           properties:
+                             href:
+                               type: string
+                    stageName: 
+                       type: string
+  cat:
+      required:
+        - name
+        - cost
+        - currency
+      type: object
+      properties:
+        name:
+          type: string
+        cost:
+          type: number
+        currency:
+          type: string
+  GetCatsListResponse:
+    properties:
+      _links:
+           type: object
+           properties:
+              self:
+                type: object
+                properties:
+                    href: 
+                      type: string
+      _embedded:
+         type: object
+         properties:
+          cats:
+            type: array
+            items:
+              type: object
+              properties:
+                    _links:
+                       type: object
+                       properties:
+                          self:
+                            type: object
+                            properties:
+                                href: 
+                                  type: string
+                    name:
+                      type: string
+                    id:
+                      type: string
+  GetCatResponse:
+              properties:
+                    _links:
+                       type: object
+                       properties:
+                          self:
+                            type: object
+                            properties:
+                                href: 
+                                  type: string
+                    name:
+                      type: string
+                    id:
+                      type: string
+                    cost:
+                      type: number
+                    currency:	
+                      type: string 
+                    _embedded: 
+                      type: object
+                      properties:
+                        color:
+                         type: array
+                         items:
+                           type: object
+                           properties:
+                                _links:
+                                   type: object
+                                   properties:
+                                      self:
+                                        type: object
+                                        properties:
+                                            href: 
+                                              type: string
+                                color:
+                                  type: string
+                               
+  color:
+      required:
+        - name
+        - hexCode
+      type: object
+      properties:
+        name:
+          type: string
+        hexCode:
+          type: string
+          
+  GetColorsListResponse:
+    properties:
+       _links:
+           type: object
+           properties:
+              self:
+                type: object
+                properties:
+                    href: 
+                      type: string
+ 
+       _embedded: 
+          type: object
+          properties:
+           color:
+            type: array
+            items:
+              type: object
+              properties:
+                    _links:
+                       type: object
+                       properties:
+                          self:
+                            type: object
+                            properties:
+                                href: 
+                                  type: string
+                                category:
+                                  type: object
+                                  properties:
+                                      href: 
+                                        type: string
+                                      categoryName: 
+                                        type: string
+                    name:
+                      type: string
+                    id:
+                      type: string           
+          
+  GetColorResponse:
+
+      type: object
+      properties:
+        _links:
+           type: object
+           properties:
+              self:
+                type: object
+                properties:
+                    href: 
+                      type: string
+              category:
+                  type: object
+                  properties:
+                      href: 
+                        type: string
+                      categoryName: 
+                        type: string
+        name:
+          type: string
+        id:
+          type: string
+        hexCode:
+          type: string                     
+                
  

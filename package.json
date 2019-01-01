@@ -9,6 +9,7 @@
   "main": "app.js",
   "dependencies": {
     "body-parser": "^1.18.3",
+    "connect": "^3.6.6",
     "express": "^4.12.3",
     "express-http-auth": "^0.1.0",
     "mongoose": "^5.4.1",

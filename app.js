@@ -41,10 +41,10 @@ app.get('/', (req, res) => {
 
 
 
-require('./api/routes/note.js')(app);
 require('./api/routes/user.js')(app);
 require('./api/routes/admin.js')(app);
 require('./api/routes/order.js')(app);
+require('./api/routes/process-table.js')(app);
 var config = {
   appRoot: __dirname // required config
 };

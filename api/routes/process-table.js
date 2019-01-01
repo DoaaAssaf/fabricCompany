@@ -1,24 +1,11 @@
-const multer = require('multer');
-
-var path = require('path');
-
 var realm  = require('express-http-auth').realm('Private Area');
-
 const User = require('../models/users.js');
 const Admin = require('../models/admins');
 
-var connect = require('connect');
 
-var storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now()+".jpeg");
-    }
-});
 
-var upload = multer({ storage: storage });
+
+
 
 var checkUserAccess= function(req, res, next) {
     User.findById(req.username).then(user => {
@@ -72,23 +59,21 @@ var adminAndUserAccess = [realm, CheckdminAndUserAccess];
 
 
 module.exports = (app) => {
-    const orders = require('../controllers/orders.js');
+    const process = require('../controllers/process.js');
 
     // Create a new Order
-    app.post('/order', userAccess ,orders.create);
+    app.post('/process-table', AdminAccess ,process.create);
 
     // Retrieve all Orders
-    app.get('/order',adminAndUserAccess, orders.findAll);
+    app.get('/process-table',adminAndUserAccess, process.findAll);
 
     // Retrieve a single Order with noteId
-    app.get('/order/:orderId',adminAndUserAccess,orders.findOne);
+    app.get('/process-table/:processId',adminAndUserAccess,process.findOne);
 
     // Update a Order with noteId
-    app.put('/order/:orderId',AdminAccess,orders.update);
+    app.put('/process-table/:processId',AdminAccess,process.update);
 
     // Delete a Order with noteId
-    app.delete('/order/:orderId', AdminAccess,orders.delete);
-    app.post('/order/:orderId/stampingImg',upload.single('img') ,userAccess,orders.postImg);
-    app.get('/order/:orderId/confirmation' ,adminAndUserAccess,orders.getConfirmation);
-    app.post('/order/:orderId/confirmation',userAccess,orders.postConfirmation);
+    app.delete('/process-table/:processId', AdminAccess,process.delete);
+
 }
