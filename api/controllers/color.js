@@ -11,8 +11,13 @@ exports.findAll = findAll;
 exports.create = (req, res) => {
 
     var id=shortid.generate();
-    ColorCat.findByIdAndUpdate(req.params.colorCatId ,  {$addToSet: { colors: { colorName:req.body.name
-                , _id: id,"_links.self.href": baseUrl.baseURL+ "colorCat/"+req.params.colorCatId+"/color/"+id}} })
+    ColorCat.findByIdAndUpdate(req.params.colorCatId ,  {$addToSet:
+            {
+                colors:
+                    {
+                        colorName:req.body.name,
+                        _id: id,
+                        "_links.self.href": baseUrl.baseURL+ "colorCat/"+req.params.colorCatId+"/color/"+id}} })
         .then(colorCat => {
 
 
@@ -113,7 +118,6 @@ exports.update = (req, res) => {
                             message: "error deleting  id " + req.params.colorId
                         });
                     }
-
                     res.send(color);
                 })
         }).catch(err => {

@@ -26,7 +26,7 @@ produces:
   - application/json
 paths:
   /user:
-    x-swagger-router-controller: user
+    x-swagger-router-controller: users
     get:
       description: get the users' list
       parameters:
@@ -1002,8 +1002,274 @@ paths:
             $ref: "#/definitions/ErrorResponse"
       security:
          - AdminAuth: []
+  /color:
+    get:
+      description: get all the colors in one Category
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetColorsListResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    post:
+      description: add a new cat color to the list
+      # movie info to be stored
+      parameters:
+      
+        - name: color
+          description:  color info
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/color"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetColorResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /color/{colorId}:
+    x-swagger-router-controller: COLOR
+    get:
+      description: get infromation about one color
+      # define the type of response for Success "200" and Error
+      parameters:
+        - name: colorId
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetColorResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - UserAuth: []
+    put:
+      description: update an existing color
+      # define the parameters
+      parameters:
+        - name: colorId
+          description: color id
+          type: string
+          in: path
+          required: true
+        - name: color
+          description: color
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/color"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetColorResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    delete:
+      description: delete a color
+      # define the parameters
+      parameters:
   
-    
+        - name: colorId
+          description: color id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /yarn/{id}:
+  # admin ans suppliers
+   get:
+      parameters:
+        - name: id
+          description: yarn id
+          type: string
+          in: path
+          required: true
+      description: get details about one yarn in the complany
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetYarnResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+   delete:
+      description: delete a yarn type
+      # define the parameters
+      parameters:
+        - name: id
+          description:  id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+  /yarn:
+    get:
+      description: get available yarns in the company
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetYarnsListResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+    post:
+      description: add a new yarn to the company
+      parameters:
+        - name: id
+          description:  new yarn information
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/yarn"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetYarnResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []     
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -1769,5 +2035,74 @@ definitions:
           type: string
         hexCode:
           type: string                     
-                
+  GetYarnsListResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        properties:
+            self: 
+              type: object
+              properties:
+                href:
+                 type: string
+      _embedded:
+          type: object
+          properties:
+            yarn:
+              type: array
+              items:
+                 type: object
+                 properties:
+                    _links:
+                       type: object
+                       properties:
+                         self:
+                           type: object
+                           properties:
+                             href:
+                               type: string
+                    code:
+                      type: string
+  yarn:
+          type: object
+          properties:
+              code:
+                type: string
+              NE: 
+                type: number
+              cables: 
+                type: number
+              filament: 
+                type: number
+              TPM: 
+                type: number
+  GetYarnResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        properties:
+            self: 
+              type: object
+              properties:
+                href:
+                 type: string
+            suppliersList:
+              type: array
+              items:
+                type: object
+                properties:
+                  href:
+                   type: string
+      code:
+        type: string
+      NE: 
+        type: number
+      cables: 
+        type: number
+      filament: 
+        type: number
+      TPM: 
+        type: number               
  

@@ -16,14 +16,14 @@ var path = require('path');
 const fs = require('fs');
 var calculateCost = require('./../services/calculateCost');
 exports.create = (req, res) => {
-  calculateCost(req.body.quantity,req.body.stamping,req.body.dyeingColor,function(total) {
+
+  calculateCost(req.body.quantity,req.body.stamping,req.body.dyeingColor,req.username,function(total) {
     var id = shortid.generate();
     var  imgUrl = null;
     var stampingImgUploaded = false;
     if (req.body.stamping === true){
         imgUrl= baseUrl.baseURL+"order/"+id+"/stampingImg";
     }
-
     const order = new Order({
         _id: id,
         stamping: req.body.stamping,
@@ -43,9 +43,7 @@ exports.create = (req, res) => {
             },
             owner: {
                 href: baseUrl.baseURL + "user/" + req.username,
-                // $ref: "user",
-                // $id: userId,
-                // $db: "fabricCompanyDB",
+
             }
         },
         _embedded: {
@@ -79,15 +77,29 @@ exports.create = (req, res) => {
         status: "pending"
 
     });
-    order.save()
-        .then(data => {
-            res.status(201).send(data);
-        }).catch(err => {
-        res.status(500).send({
-            message: err.message || "Some error occurred while creating the Order."
-        });
-});
+    order.save().then(data => {
+            User.findOneAndUpdate({"_id": req.username}, {
+        $addToSet: {
+                       "_embedded.orders":{
+                            "_links.self.href": baseUrl.baseURL + "order/" + id,
+                            "_id": id
+                        }
+                }
+            }).then(user => {
+                    if (!user) {
+                        return res.status(500).send({
+                            message: " error while adding the order to the user : " + req.username
+                        })
+                    }
+                })
+        res.status(201).send(data)
+                .catch(err => {
+                    res.status(500).send({
+                        message: err.message || "Some error occurred while creating the Order."
+                    });
+                });
     });
+  });
 };
 // Retrieve and return all Orders from the database.
 function  findAll (req, res) {

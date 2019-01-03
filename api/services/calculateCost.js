@@ -1,8 +1,10 @@
 
 const mongoose = require('mongoose');
 const Process = require('../models/process.js');
-
-module.exports =  function calculateCost(quantity,stamping,dyeingColor,callback) {
+const Color = require('../models/color.js');
+const ColorCat= require('../models/colorCat.js');
+const User = require('../models/users.js');
+module.exports =  function calculateCost(quantity,stamping,dyeingColor,userId,callback) {
     var total =0;
     Process.find({}).stream()
         .on('data', function (doc) {
@@ -15,20 +17,31 @@ module.exports =  function calculateCost(quantity,stamping,dyeingColor,callback)
                     total = total +( quantity) * doc.price;
                     console.log("stamping", stamping, "total = ",total)
                 }
-                if (!(dyeingColor === "")&& (doc.name === "Dyeing")){
-                    total = total +( quantity) * doc.price;
-                    console.log("color", dyeingColor, "total = ",total)
-                }
-            }
-        })
+                if (!(dyeingColor === "")&& (doc.name === "Dyeing")) {
+                    Color.findOne({name: dyeingColor})
+                        .then(color => {
+                            if (!color) {
+                                console.log("color was not found in our colors list!");
+                            }
+                            ColorCat.findOne({"_id": color._links.category.categoryId})
+                                .then(colorCat => {
+                                    total = total + (quantity) * colorCat.cost;
+                                    User.findByIdAndUpdate(userId)
+                                        .then(user => {
+                                            if(!user) {
+                                                console.log("user not found ")
+                                            }
+                                            user._embedded.totalSales = user._embedded.totalSales +total;
+                                            user.save();
+                                        });
+                                    callback(total);
+
+                                })
+
+                        })
+                }}})
         .on('error', function (err) {
-            console.log(err)
-        })
-        .on('end', function () {
-            console.log("quantity = ",quantity)
-            console.log("total at the end = ",total)
-            callback(total);
+        console.log(err)
+    })
 
-
-        });
 };
