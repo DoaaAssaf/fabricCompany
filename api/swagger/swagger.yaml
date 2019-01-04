@@ -1270,6 +1270,303 @@ paths:
             $ref: "#/definitions/ErrorResponse"
       security:
          - AdminAuth: []     
+  /supplier:
+    x-swagger-router-controller: user
+    get:
+      parameters:
+        - in: query
+          name: top10
+          required: true
+          type: boolean
+      description: get the suppliers' list
+      # define the type of response for Success "200" and Error
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetSuppliersListResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+    post:
+      description: add a new supplier to the list
+      parameters:
+        - name: supplier
+          description:  supplier information
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/supplier"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetSupplierResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+  /supplier/{id}:
+    x-swagger-router-controller: supplier
+    get:
+      description: get infromation about one supplier
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetSupplierResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+    put:
+      description: update an existing supplier
+      # define the parameters
+      parameters:
+        - name: id
+          description: supplier id
+          type: string
+          in: path
+          required: true
+        - name: supplier
+          description: supplier
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/supplier"
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetSupplierResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+    delete:
+      description: delete a supplier
+      # define the parameters
+      parameters:
+        - name: id
+          description: supplier id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+  /supplier/{id}/request:
+    get:
+      description: get out orders list for one supplier
+      parameters:
+        - in: query
+          name: status
+          type: integer
+          description: /order?status=open
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetSupplierRequest"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+  /supplier/{supplierID}/yarn:
+    get:
+      description: get available yarns for one supplier
+      parameters:
+        - name: supplierID
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetSupplierYarnsResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+    post:
+      description: add a new yarn for the supplier
+      parameters:
+        - name: supplierID
+          type: string
+          description:  supplier
+          in: path
+          required: true
+        - name: id
+          description:  yarn information
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/yarn"
+      responses:
+        "201":
+          description: created
+          schema:
+            $ref: "#/definitions/GetSupplierYarnsResponse"
+        "400":
+          description: bad request
+          schema:
+            $ref: "#/definitions/badRequestResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []
+  /supplier/{id}/yarn/{yarnID}:
+   #supplier
+    delete:
+      description: delete a supplier yarn type
+      # define the parameters
+      parameters:
+        - name: id
+          description: supplier id
+          type: string
+          in: path
+          required: true
+        - name: yarnID
+          description: yarn id
+          type: string
+          in: path
+          required: true
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GeneralDeletedddSuccessfullyResponse"
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: "#/definitions/UnauthorizedResponse"
+        "404":
+          description: Not found
+          schema:
+            $ref: "#/definitions/notFoundResponse"
+        "500":
+          description: internal server error
+          schema:
+            $ref: "#/definitions/internalServerErrorRequestResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+      security:
+         - AdminAuth: []
+         - SupplierAuth: []     
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -2105,4 +2402,234 @@ definitions:
         type: number
       TPM: 
         type: number               
- 
+  GetSuppliersListResponse:
+    required:
+      - supplier
+    properties:
+      supplier: 
+        type: object
+        properties:
+             _links: 
+                type: object
+                properties:
+                    self:
+                      type: object
+                      properties:
+                        href:
+                          type: string
+             _embedded:
+              type: object
+              properties:
+                 suppliersList:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        _links:
+                          type: object
+                          properties:
+                               self:
+                                  type: string
+                        id:
+                          type: string
+                        supplierName:
+                          type: string
+                        supplierApi:
+                          type: string
+                        totalSales:
+                          type: number
+
+      
+  GetSupplierResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        properties:
+            self: 
+              type: object
+              properties:
+                href:
+                 type: string
+            yarnsList:
+              type: object
+              properties:
+                href:
+                 type: string
+                 description: acces to yarns list to add a new yarn type for example
+      _embedded:
+        type: object
+        properties:
+          orders:
+            type: array
+            items:
+                type: object
+                properties:
+                  _links:
+                    type: object
+                    properties:
+                      self:
+                        type: object
+                        properties:
+                          href:
+                            type: string
+          totalSales:
+            type: number
+             
+          yarns:
+              type: object
+              properties:
+                yarnsLink:
+                 type: string
+                 description: access the yarns list for that user /supplier/ID/yarn
+                yarnsList:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      _links:
+                        type: object
+                        properties:
+                            self:
+                              type: object
+                              properties:
+                                href:
+                                  type: string
+                                  description: access one yarn from the baseUsl/yarn/yarnID
+                      yarnName: 
+                        type: string
+              
+              
+                            
+      supplierName:
+        type: string
+        description: supplier name
+      password:
+        type: string
+        description: supplier password
+      email:
+        type: string
+        description: supplier email
+      supplierApi:
+        type: string
+      address:
+        type: object
+        properties:
+          street:
+            type: string
+          city:
+            type: string
+          state:
+            type: string
+          country:
+            type: string
+          zipCode: 
+            type: number
+      
+  supplier:
+    type: object
+    properties:
+      id:
+        type: string
+        description: supplier unique id
+      supplierName:
+        type: string
+        description: supplier name
+      password:
+        type: string
+        description: supplier password
+      email:
+        type: string
+        description: supplier email
+      supplierApi:
+        type: string
+      address:
+        type: object
+        properties:
+          street:
+            type: string
+          city:
+            type: string
+          state:
+            type: string
+          country:
+            type: string
+          zipCode: 
+            type: number
+    required:
+      - supplierName
+      - password
+      - email 
+      - supplierApi
+      - address
+  GetSupplierRequest:
+    type: object
+    properties:
+      _links:
+          type: object
+          properties:
+              self: 
+                type: object
+                properties:
+                  href:
+                   type: string
+              customerOrder:
+                type: object
+                properties:
+                  href:
+                   type: string
+              yarnType: 
+                type: object
+                properties:
+                  href:
+                   type: string
+              supplier:
+                type: object
+                properties:
+                  href:
+                   type: string
+      id: 
+       type: string
+      orderDate:
+       type: string
+      orderId:
+       type: string
+      status:
+       type: string
+       description: order status if it is delieverd or requeste
+      delieverDate:
+        type: string
+  GetSupplierYarnsResponse:
+    type: object
+    properties:
+      _links:
+        type: object
+        properties:
+            self: 
+              type: object
+              properties:
+                href:
+                 type: string
+            supplier: 
+              type: object
+              properties:
+                href:
+                 type: string
+      _embedded:
+          type: object
+          properties:
+            yarn:
+              type: array
+              items:
+                 type: object
+                 properties:
+                    _links:
+                       type: object
+                       properties:
+                         self:
+                           type: object
+                           properties:
+                             href:
+                               type: string
+                    code:
+                      type: string

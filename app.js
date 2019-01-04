@@ -47,6 +47,8 @@ require('./api/routes/order.js')(app);
 require('./api/routes/process-table.js')(app);
 require('./api/routes/colorCat.js')(app);
 require('./api/routes/color.js')(app);
+require('./api/routes/yarn.js')(app);
+require('./api/routes/supplier.js')(app);
 var config = {
   appRoot: __dirname // required config
 };
