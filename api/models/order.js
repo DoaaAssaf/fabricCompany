@@ -9,6 +9,7 @@ const OrderSchema = mongoose.Schema({
         uploaded:Boolean
     },
     dyeingColor: { type: String},
+    dyeing: { type: Boolean, required: true, default:false},
     quantity: { type: Number, required: true},
     deliveryDate: { type: String, required:true},
     deliveryPlace: {
@@ -25,10 +26,13 @@ const OrderSchema = mongoose.Schema({
             cables: {type: Number, required: true,default: 1},
             filament: {type: Number, required: true,default:1},
             TPM: {type: Number, required: true,default: 1},
-            percentage:{type: Number, required: true}
+            percentage:{type: Number},
+            yarnCost:{type:Number},
+            available:{ type: Boolean},
+            _id:{type: String}
         }
     ],
-
+    totalyarn:Number,
     _links: {
         self:{
             href: String
@@ -71,3 +75,4 @@ const OrderSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model('Order', OrderSchema);
+

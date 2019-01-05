@@ -15,9 +15,31 @@ const upload = multer({dis:'paints/'});
 var path = require('path');
 const fs = require('fs');
 var calculateCost = require('./../services/calculateCost');
+var checkForFabric = require('./../services/checkForFabric');
 exports.create = (req, res) => {
 
-  calculateCost(req.body.quantity,req.body.stamping,req.body.dyeingColor,req.username,function(total) {
+  calculateCost(req.body.quantity,req.body.stamping,req.body.dyeing,req.body.dyeingColor,req.username,function(total,error) {
+      var totalyarnCost=0;
+              var arr = [];
+              for(var i = 0; i < req.body.fabricSpec.length; i++) {
+                  arr [i] = req.body.fabricSpec[i]
+              }
+                  checkForFabric(req.body.fabricSpec, function (yarnCost, yarnPrices,availablity) {
+                      for(var i = 0; i < req.body.fabricSpec.length; i++) {
+                      var elem =arr[i];
+                      if(availablity[i] === false)
+                      {
+                          elem.yarnCost = null;
+                          elem.available =false;
+                          console.log("element not  available =",elem)
+                          continue;
+                      }
+                      else{
+                          elem.yarnCost = yarnPrices[i];
+                          elem.available =true;
+                          console.log("element available =",elem)
+                      }
+
     var id = shortid.generate();
     var  imgUrl = null;
     var stampingImgUploaded = false;
@@ -33,10 +55,12 @@ exports.create = (req, res) => {
                 uploaded: stampingImgUploaded
             },
         dyeingColor: req.body.dyeingColor || "",
+        dyeing: req.body.dyeing,
         quantity: req.body.quantity,
         deliveryDate: req.body.deliveryDate,
         deliveryPlace: req.body.deliveryPlace,
-        fabricSpec: req.body.fabricSpec,
+        fabricSpec:arr,
+
         _links: {
             self: {
                 href: baseUrl.baseURL + "order/" + id
@@ -68,15 +92,21 @@ exports.create = (req, res) => {
                         href:  imgUrl
                     }
                 }
-            }
-        ,
+            },
+        totalyarn:yarnCost*req.body.quantity,
         confirmed: false,
-        totalCost:  total
-,
+        totalCost: total+(yarnCost*req.body.quantity)+( total+(yarnCost*req.body.quantity) *15/100),
         currency: "$",
         status: "pending"
 
     });
+      if ((error==="color was not found in our colors list!") || (error==="error!")||(error ==="user Not found")) {
+          console.log(error)
+          return res.status(400).send({
+              message: error
+          })
+      }
+
     order.save().then(data => {
             User.findOneAndUpdate({"_id": req.username}, {
         $addToSet: {
@@ -91,15 +121,15 @@ exports.create = (req, res) => {
                             message: " error while adding the order to the user : " + req.username
                         })
                     }
+                res.status(201).send(data);
                 })
-        res.status(201).send(data)
-                .catch(err => {
-                    res.status(500).send({
-                        message: err.message || "Some error occurred while creating the Order."
-                    });
-                });
+
     });
-  });
+                      }
+                  })
+          });
+
+
 };
 // Retrieve and return all Orders from the database.
 function  findAll (req, res) {

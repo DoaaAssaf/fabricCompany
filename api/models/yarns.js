@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const YarnSchema = mongoose.Schema({
     _id: String,
     name: { type: String, required: true},
-    code:{ type: String, required: true},
+    code:{ type: String, required: true,enum: ['CO', 'PES', 'VI','PA','EA','WO','WS','CLY','ORG','SE','CMD','LIN']},
     NE:{ type: Number, required: true, min:5,max:200},
     cables:{ type: Number, required: true,min:1,max:4},
     filament:{ type: Number, required: true,min:1,max:124},

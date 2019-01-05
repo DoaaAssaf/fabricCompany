@@ -11,8 +11,6 @@ exports.findAll = findAll;
 
 // Create and Save a new User
 exports.create = (req, res) => {
-    // Validate request
-    console.log("Create was called");
     if(!req.body.username|| !req.body.password) {
         return res.status(400).send({
             message: "bad request user name and email and password can not be empty"
@@ -48,10 +46,7 @@ exports.create = (req, res) => {
     // Save User in the database
     user.save()
         .then(data => {
-            //  res.header("Access-Control-Allow-Origin", "*");
-            //  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-            res.status(201).send(data);
+       res.status(201).send(data);
 
         }).catch(err => {
         res.status(500).send({
